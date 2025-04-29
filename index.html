@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Live Stream Dashboard</title>
+  <title>Live Earth Watch</title>
   <style>
     :root {
-      --bg: #f5f5f5;
-      --text: #333;
-      --card-bg: #fff;
-      --header-bg: #2c3e50;
-      --header-text: #ecf0f1;
+      --bg: #f0f2f5;
+      --text: #222;
+      --card-bg: #ffffff;
+      --header-bg: #1f2937;
+      --header-text: #f9fafb;
+      --accent: #2563eb;
     }
 
     body.dark-mode {
-      --bg: #1e1e1e;
-      --text: #f5f5f5;
-      --card-bg: #2c2c2c;
-      --header-bg: #121212;
-      --header-text: #ffffff;
+      --bg: #0f172a;
+      --text: #e2e8f0;
+      --card-bg: #1e293b;
+      --header-bg: #0f172a;
+      --header-text: #e2e8f0;
+      --accent: #3b82f6;
     }
 
     body {
@@ -26,78 +28,115 @@
       margin: 0;
       background-color: var(--bg);
       color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
     }
 
     header {
       background: var(--header-bg);
       color: var(--header-text);
-      padding: 1.5rem;
+      padding: 2rem 1rem;
       text-align: center;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
     }
 
     header h1 {
-      margin: 0;
-      font-size: 2rem;
+      margin: 0 0 1rem;
+      font-size: 2.5rem;
     }
 
-    .toggle-btn {
-      background: none;
-      border: 1px solid var(--header-text);
-      color: var(--header-text);
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
+    header p {
+      margin: 0 auto;
+      font-size: 1.1rem;
+      max-width: 700px;
+      line-height: 1.5;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0 1rem;
+      flex-wrap: wrap;
+    }
+
+    .toggle-btn, select {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
       font-size: 1rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    select {
+      appearance: none;
+      text-align-last: center;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-      gap: 1.5rem;
-      padding: 1rem 2rem;
+      gap: 2rem;
+      padding: 2rem;
     }
 
     .stream {
       background: var(--card-bg);
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
-      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .stream:hover {
+      transform: translateY(-4px);
     }
 
     .stream h3 {
       margin: 0;
-      padding: 0.75rem 1rem;
-      background-color: #3498db;
+      padding: 1rem;
+      background-color: var(--accent);
       color: white;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
 
     .actions {
       display: flex;
       justify-content: space-between;
-      padding: 0.5rem 1rem;
-      background: #eee;
+      padding: 0.75rem 1rem;
+      background: #f0f0f0;
+    }
+
+    body.dark-mode .actions {
+      background: #2a2a2a;
     }
 
     .actions button {
-      background: #3498db;
+      background: var(--accent);
       color: white;
       border: none;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
       cursor: pointer;
+      font-size: 0.95rem;
     }
 
-    iframe {
+    .iframe-wrapper {
+      position: relative;
       width: 100%;
-      height: 215px;
+      padding-top: 56.25%;
+    }
+
+    .iframe-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       border: none;
     }
 
@@ -108,140 +147,94 @@
     }
 
     @media (max-width: 480px) {
-      iframe {
-        height: 200px;
+      header h1 {
+        font-size: 1.75rem;
+      }
+
+      header p {
+        font-size: 0.95rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      .grid {
+        padding: 1rem;
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h1>Live Stream Dashboard</h1>
-    <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    <h1>Live Earth Watch</h1>
+    <p>Welcome to Live Earth Watch – a curated dashboard of real-time streams from scenic and cultural landmarks around the globe. Stay connected with the world through stunning views and local times.</p>
+    <div class="controls">
+      <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+      <select id="regionFilter" onchange="filterStreams()">
+        <option value="all">All Regions</option>
+        <option value="north-america">North America</option>
+        <option value="europe">Europe</option>
+        <option value="australia">Australia</option>
+        <option value="asia">Asia</option>
+      </select>
+      <select id="qualitySelector" onchange="updateQuality()">
+        <option value="default">Stream Quality</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+      </select>
+    </div>
   </header>
-
-  <div class="grid" id="stream-grid">
-    <!-- Streams will be loaded here -->
-  </div>
-
+  <div class="grid" id="stream-grid"></div>
   <script>
+    let currentQuality = '';
+
     const streams = [
-      {
-        id: 'grand-tetons',
-        title: 'Grand Tetons',
-        youtubeUrl: 'https://www.youtube.com/embed/o4fKtgPVpoU',
-        timeZone: 'America/Denver'
-      },
-      {
-        id: 'jackson-wy',
-        title: 'Jackson, WY',
-        youtubeUrl: 'https://www.youtube.com/embed/BN7gzH-i-zo',
-        timeZone: 'America/Denver'
-      },
-      {
-        id: 'mammoth',
-        title: 'Mammoth Lakes, CA',
-        youtubeUrl: 'https://www.youtube.com/embed/awxz_oIlJE0',
-        timeZone: 'America/Los_Angeles'
-      },
-      {
-        id: 'yellowstone',
-        title: 'Yellowstone',
-        youtubeUrl: 'https://www.youtube.com/embed/NUh7jIxvh2Q',
-        timeZone: 'America/Denver'
-      },
-      {
-        id: 'swiss-alps',
-        title: 'Swiss Alps',
-        youtubeUrl: 'https://www.youtube.com/embed/8IGhApr923A',
-        timeZone: 'Europe/Zurich'
-      },
-      {
-        id: 'sydney',
-        title: 'Sydney, Australia',
-        youtubeUrl: 'https://www.youtube.com/embed/5uZa3-RMFos',
-        timeZone: 'Australia/Sydney'
-      },
-      {
-        id: 'niagara-falls',
-        title: 'Niagara Falls',
-        youtubeUrl: 'https://www.youtube.com/embed/W3D3dEpR3bs',
-        timeZone: 'America/New_York'
-      },
-      {
-        id: 'chicago-sky-deck',
-        title: 'Chicago Sky Deck',
-        youtubeUrl: 'https://www.youtube.com/embed/sQxL8t0gtu8',
-        timeZone: 'America/Chicago'
-      },
-      {
-        id: 'statue-of-liberty',
-        title: 'Statue of Liberty',
-        youtubeUrl: 'https://www.youtube.com/embed/IOz_BoSpEi4',
-        timeZone: 'America/New_York'
-      },
-      {
-        id: 'florida-keys-underwater',
-        title: 'Florida Keys Underwater',
-        youtubeUrl: 'https://www.youtube.com/embed/qi0mY6zVQnY',
-        timeZone: 'America/New_York'
-      },
-      {
-        id: 'huntington-beach-pier',
-        title: 'Huntington Beach Pier',
-        youtubeUrl: 'https://www.youtube.com/embed/mhQjsLBfOoY',
-        timeZone: 'America/Los_Angeles'
-      },
-      {
-        id: 'new-york-times-square',
-        title: 'New York Times Square',
-        youtubeUrl: 'https://www.youtube.com/embed/rnXIjl_Rzy4',
-        timeZone: 'America/New_York'
-      },
-      {
-        id: 'new-orleans',
-        title: 'New Orleans',
-        youtubeUrl: 'https://www.youtube.com/embed/DLmn7f9SJ5A',
-        timeZone: 'America/Chicago'
-      },
-      {
-        id: 'bellagio-gardens',
-        title: 'Bellagio Gardens, Las Vegas, NV',
-        youtubeUrl: 'https://www.youtube.com/embed/R__e74ULCXQ',
-        timeZone: 'America/Los_Angeles'
-      },
-      {
-        id: '911-memorial',
-        title: '9/11 Memorial, New York',
-        youtubeUrl: 'https://www.youtube.com/embed/Yzit2MCJ9gw',
-        timeZone: 'America/New_York'
-      },
-      {
-        id: 'white-house',
-        title: 'White House, Washington DC',
-        youtubeUrl: 'https://www.youtube.com/embed/hTHld3T7NA0',
-        timeZone: 'America/New_York'
-      }
+      { id: 'grand-tetons', title: 'Grand Tetons', youtubeUrl: 'https://www.youtube.com/embed/o4fKtgPVpoU', timeZone: 'America/Denver', region: 'north-america' },
+      { id: 'jackson-wy', title: 'Jackson, WY', youtubeUrl: 'https://www.youtube.com/embed/BN7gzH-i-zo', timeZone: 'America/Denver', region: 'north-america' },
+      { id: 'mammoth', title: 'Mammoth Lakes, CA', youtubeUrl: 'https://www.youtube.com/embed/awxz_oIlJE0', timeZone: 'America/Los_Angeles', region: 'north-america' },
+      { id: 'yellowstone', title: 'Yellowstone', youtubeUrl: 'https://www.youtube.com/embed/NUh7jIxvh2Q', timeZone: 'America/Denver', region: 'north-america' },
+      { id: 'swiss-alps', title: 'Swiss Alps', youtubeUrl: 'https://www.youtube.com/embed/8IGhApr923A', timeZone: 'Europe/Zurich', region: 'europe' },
+      { id: 'sydney', title: 'Sydney, Australia', youtubeUrl: 'https://www.youtube.com/embed/5uZa3-RMFos', timeZone: 'Australia/Sydney', region: 'australia' },
+      { id: 'niagara-falls', title: 'Niagara Falls', youtubeUrl: 'https://www.youtube.com/embed/W3D3dEpR3bs', timeZone: 'America/New_York', region: 'north-america' },
+      { id: 'chicago-sky-deck', title: 'Chicago Sky Deck', youtubeUrl: 'https://www.youtube.com/embed/sQxL8t0gtu8', timeZone: 'America/Chicago', region: 'north-america' },
+      { id: 'statue-of-liberty', title: 'Statue of Liberty', youtubeUrl: 'https://www.youtube.com/embed/IOz_BoSpEi4', timeZone: 'America/New_York', region: 'north-america' },
+      { id: 'florida-keys-underwater', title: 'Florida Keys Underwater', youtubeUrl: 'https://www.youtube.com/embed/qi0mY6zVQnY', timeZone: 'America/New_York', region: 'north-america' },
+      { id: 'huntington-beach-pier', title: 'Huntington Beach Pier', youtubeUrl: 'https://www.youtube.com/embed/mhQjsLBfOoY', timeZone: 'America/Los_Angeles', region: 'north-america' },
+      { id: 'new-york-times-square', title: 'New York Times Square', youtubeUrl: 'https://www.youtube.com/embed/rnXIjl_Rzy4', timeZone: 'America/New_York', region: 'north-america' },
+      { id: 'new-orleans', title: 'New Orleans', youtubeUrl: 'https://www.youtube.com/embed/DLmn7f9SJ5A', timeZone: 'America/Chicago', region: 'north-america' },
+      { id: 'bellagio-gardens', title: 'Bellagio Gardens, Las Vegas, NV', youtubeUrl: 'https://www.youtube.com/embed/R__e74ULCXQ', timeZone: 'America/Los_Angeles', region: 'north-america' },
+      { id: '911-memorial', title: '9/11 Memorial, New York', youtubeUrl: 'https://www.youtube.com/embed/Yzit2MCJ9gw', timeZone: 'America/New_York', region: 'north-america' },
+      { id: 'white-house', title: 'White House, Washington DC', youtubeUrl: 'https://www.youtube.com/embed/hTHld3T7NA0', timeZone: 'America/New_York', region: 'north-america' },
+      { id: 'mount-fuji', title: 'Mount Fuji, Japan', youtubeUrl: 'https://www.youtube.com/embed/bdUbACCWmoY', timeZone: 'Asia/Tokyo', region: 'asia' }
     ];
 
-    const grid = document.getElementById('stream-grid');
-
-    streams.forEach(stream => {
+    function createStreamCard(stream) {
       const streamDiv = document.createElement('div');
       streamDiv.className = 'stream';
       streamDiv.id = stream.id;
+      streamDiv.dataset.region = stream.region;
 
       const title = document.createElement('h3');
       title.textContent = stream.title;
       streamDiv.appendChild(title);
 
+      const iframeWrapper = document.createElement('div');
+      iframeWrapper.className = 'iframe-wrapper';
+
       const iframe = document.createElement('iframe');
-      iframe.src = `${stream.youtubeUrl}?autoplay=1&mute=1&controls=1`;
+      iframe.loading = 'lazy';
+      iframe.src = `${stream.youtubeUrl}?autoplay=1&mute=1&controls=1${currentQuality ? `&vq=${currentQuality}` : ''}`;
       iframe.allow = 'autoplay; encrypted-media';
       iframe.allowFullscreen = true;
       iframe.title = `${stream.title} Live Stream`;
-      streamDiv.appendChild(iframe);
+
+      iframeWrapper.appendChild(iframe);
+      streamDiv.appendChild(iframeWrapper);
 
       const timeDiv = document.createElement('div');
       timeDiv.className = 'time';
@@ -251,12 +244,12 @@
       const actions = document.createElement('div');
       actions.className = 'actions';
       actions.innerHTML = `
-        <button onclick="refreshStream('${iframe.src}', '${stream.id}')">Refresh</button>
+        <button onclick="refreshStream('${stream.youtubeUrl}', '${stream.id}')">Refresh</button>
         <button onclick="fullscreenStream('${stream.id}')">Fullscreen</button>
       `;
       streamDiv.appendChild(actions);
 
-      grid.appendChild(streamDiv);
+      document.getElementById('stream-grid').appendChild(streamDiv);
 
       function updateTime() {
         const now = new Date();
@@ -274,28 +267,52 @@
 
       updateTime();
       setInterval(updateTime, 60000);
-    });
+    }
+
+    function renderStreams() {
+      document.getElementById('stream-grid').innerHTML = '';
+      streams.forEach(createStreamCard);
+    }
+
+    function filterStreams() {
+      const region = document.getElementById('regionFilter').value;
+      document.querySelectorAll('.stream').forEach(el => {
+        el.style.display = region === 'all' || el.dataset.region === region ? 'flex' : 'none';
+      });
+    }
+
+    function updateQuality() {
+      const selector = document.getElementById('qualitySelector');
+      currentQuality = selector.value === 'default' ? '' : selector.value;
+      document.querySelectorAll('.stream').forEach(stream => {
+        const iframe = stream.querySelector('iframe');
+        const baseSrc = iframe.src.split('?')[0];
+        iframe.src = `${baseSrc}?autoplay=1&mute=1&controls=1${currentQuality ? `&vq=${currentQuality}` : ''}`;
+      });
+    }
 
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
     }
 
-    function refreshStream(src, id) {
-      const stream = document.querySelector(`#${id} iframe`);
-      stream.src = src;
+    function refreshStream(baseUrl, id) {
+      const iframe = document.querySelector(`#${id} iframe`);
+      iframe.src = `${baseUrl}?autoplay=1&mute=1&controls=1${currentQuality ? `&vq=${currentQuality}` : ''}`;
     }
 
     function fullscreenStream(id) {
       const iframe = document.querySelector(`#${id} iframe`);
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {
-        iframe.msRequestFullscreen();
+      const wrapper = iframe.closest('.iframe-wrapper');
+      if (wrapper.requestFullscreen) {
+        wrapper.requestFullscreen();
+      } else if (wrapper.webkitRequestFullscreen) {
+        wrapper.webkitRequestFullscreen();
+      } else if (wrapper.msRequestFullscreen) {
+        wrapper.msRequestFullscreen();
       }
     }
-  </script>
 
+    renderStreams();
+  </script>
 </body>
 </html>
