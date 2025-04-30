@@ -180,6 +180,8 @@
         <option value="europe">Europe</option>
         <option value="australia">Australia</option>
         <option value="asia">Asia</option>
+        <option value="south-america">South America</option>
+        <option value="africa">Africa</option>
       </select>
       <select id="qualitySelector" onchange="updateQuality()">
         <option value="default">Stream Quality</option>
@@ -199,7 +201,7 @@
       { id: 'mammoth', title: 'Mammoth Lakes, CA', youtubeUrl: 'https://www.youtube.com/embed/awxz_oIlJE0', timeZone: 'America/Los_Angeles', region: 'north-america' },
       { id: 'yellowstone', title: 'Yellowstone', youtubeUrl: 'https://www.youtube.com/embed/NUh7jIxvh2Q', timeZone: 'America/Denver', region: 'north-america' },
       { id: 'swiss-alps', title: 'Swiss Alps', youtubeUrl: 'https://www.youtube.com/embed/8IGhApr923A', timeZone: 'Europe/Zurich', region: 'europe' },
-      { id: 'sydney', title: 'Sydney, Australia', youtubeUrl: 'https://www.youtube.com/embed/5uZa3-RMFos', timeZone: 'Australia/Sydney', region: 'australia' },
+      { id: 'sydney', title: 'Sydney, Australia', youtubeUrl: 'https://www.youtube.com/embed/jshwkG1ZpP8', timeZone: 'Australia/Sydney', region: 'australia' },
       { id: 'niagara-falls', title: 'Niagara Falls', youtubeUrl: 'https://www.youtube.com/embed/W3D3dEpR3bs', timeZone: 'America/New_York', region: 'north-america' },
       { id: 'chicago-sky-deck', title: 'Chicago Sky Deck', youtubeUrl: 'https://www.youtube.com/embed/sQxL8t0gtu8', timeZone: 'America/Chicago', region: 'north-america' },
       { id: 'statue-of-liberty', title: 'Statue of Liberty', youtubeUrl: 'https://www.youtube.com/embed/IOz_BoSpEi4', timeZone: 'America/New_York', region: 'north-america' },
@@ -210,7 +212,14 @@
       { id: 'bellagio-gardens', title: 'Bellagio Gardens, Las Vegas, NV', youtubeUrl: 'https://www.youtube.com/embed/R__e74ULCXQ', timeZone: 'America/Los_Angeles', region: 'north-america' },
       { id: '911-memorial', title: '9/11 Memorial, New York', youtubeUrl: 'https://www.youtube.com/embed/Yzit2MCJ9gw', timeZone: 'America/New_York', region: 'north-america' },
       { id: 'white-house', title: 'White House, Washington DC', youtubeUrl: 'https://www.youtube.com/embed/hTHld3T7NA0', timeZone: 'America/New_York', region: 'north-america' },
-      { id: 'mount-fuji', title: 'Mount Fuji, Japan', youtubeUrl: 'https://www.youtube.com/embed/bdUbACCWmoY', timeZone: 'Asia/Tokyo', region: 'asia' }
+      { id: 'mount-fuji', title: 'Mount Fuji, Japan', youtubeUrl: 'https://www.youtube.com/embed/bdUbACCWmoY', timeZone: 'Asia/Tokyo', region: 'asia' },
+      { id: 'eiffel-tower', title: 'Eiffel Tower, Paris, France', youtubeUrl: 'https://www.youtube.com/embed/OzYp4NRZlwQ', timeZone: 'Europe/Paris', region: 'europe' },
+      { id: 'venice', title: 'Venice, Italy', youtubeUrl: 'https://www.youtube.com/embed/HpZAez2oYsA', timeZone: 'Europe/Rome', region: 'europe' },
+      { id: 'london', title: 'London, UK', youtubeUrl: 'https://www.youtube.com/embed/j9Sa4uBGGQ0', timeZone: 'Europe/London', region: 'europe' },
+      { id: 'tokyo', title: 'Tokyo, Japan', youtubeUrl: 'https://www.youtube.com/embed/6dp-bvQ7RWo', timeZone: 'Asia/Tokyo', region: 'asia' },
+      { id: 'brisbane', title: 'Brisbane, Australia', youtubeUrl: 'https://www.youtube.com/embed/L8nGDY0UIZc', timeZone: 'Australia/Brisbane', region: 'australia' },
+      { id: 'rio-de-janeiro', title: 'Rio De Janeiro, Brazil', youtubeUrl: 'https://www.youtube.com/embed/6QoLEltTzIM', timeZone: 'America/Sao_Paulo', region: 'south-america' },
+      { id: 'kenya-africa', title: 'Kenya, Africa', youtubeUrl: 'https://www.youtube.com/embed/XsOU8JnEpNM', timeZone: 'Africa/Nairobi', region: 'africa' }
     ];
 
     function createStreamCard(stream) {
@@ -295,20 +304,15 @@
       document.body.classList.toggle('dark-mode');
     }
 
-    function refreshStream(baseUrl, id) {
-      const iframe = document.querySelector(`#${id} iframe`);
-      iframe.src = `${baseUrl}?autoplay=1&mute=1&controls=1${currentQuality ? `&vq=${currentQuality}` : ''}`;
+    function refreshStream(youtubeUrl, streamId) {
+      const iframe = document.querySelector(`#${streamId} iframe`);
+      iframe.src = `${youtubeUrl}?autoplay=1&mute=1&controls=1${currentQuality ? `&vq=${currentQuality}` : ''}`;
     }
 
-    function fullscreenStream(id) {
-      const iframe = document.querySelector(`#${id} iframe`);
-      const wrapper = iframe.closest('.iframe-wrapper');
+    function fullscreenStream(streamId) {
+      const wrapper = document.querySelector(`#${streamId} .iframe-wrapper`);
       if (wrapper.requestFullscreen) {
         wrapper.requestFullscreen();
-      } else if (wrapper.webkitRequestFullscreen) {
-        wrapper.webkitRequestFullscreen();
-      } else if (wrapper.msRequestFullscreen) {
-        wrapper.msRequestFullscreen();
       }
     }
 
